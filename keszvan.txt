@@ -1,0 +1,11 @@
+(ezeket lehet "eladni" a bemutatón)
+
+Adatok letöltése, értelmezése (Dutch Online)
+
+Néhány adatábrázolás
+
+Differenciálás:
+ d1 = v[i+1] - v[i-1]
+ d2 = v[i+1] - 2 * v[i] + [i-1]
+ d3 = (- v[i-2] + 2 * v[i-1] - 2 * v[i+1] + v[i+2]) / 2
+Ahol túl kicsi / túl nagy az index, ott d = v (d2 = v, d3 = v).

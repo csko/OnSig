@@ -1,0 +1,10 @@
+Kornél:
+ - adatok vizualizálása
+ - adatok normalizálása
+ - egy tanuló kipróbálása
+
+Sanyi:
+
+Közös:
+ - kiértékelési metrika értelmezése (likelihood score)
+ - lehetne jobban megcsinálni a differenciálást? ki kellene venni az elsö és utolsó kettö sort?

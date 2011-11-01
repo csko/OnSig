@@ -1,0 +1,16 @@
+Versenykiírás:
+
+http://www.forensic.to/webhome/afha/SigComp.html
+
+Tartalom:
+
+miez.txt: ez a dokumentum
+teendok.txt: TODO
+keszvan.txt: bemutatókhoz gondolatok
+scripts/: segédeszközök a feldolgozáshoz
+  plot.py: adatábrázoló script. szükséges: python2, python2-matplotlib python2-numpy.
+  makederiv.py: data/ -ból data-deriv/ elkészítése.
+data/: a kiindulási adathalmaz
+data-deriv/: a kiindulási adatok az elsö három deriválttal kiegészítve
+plots/: ábrák, amiket a segédeszközök gyártanak (pressure/ nyomásértékeket is tartalmaz)
+sample-plots/: néhány minta ábra
