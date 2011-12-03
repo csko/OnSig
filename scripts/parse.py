@@ -2,7 +2,6 @@
 
 import os
 from numpy import array, append
-from collections import defaultdict
 
 # Data path
 F = "../data/"
@@ -41,10 +40,12 @@ def makefile(dataset, datafile, fname):
     origdata[i] -= array(c)
 
   data = makelocal(dataset, datafile, origdata)
-  globaldata = makeglobal(dataset, datafile, data)
+  global_data = makeglobal(dataset, datafile, data)
 
-  writelocal(dataset, datafile, globaldata)
-#  writeglobal(dataset, datafile, data)
+  writelocal(dataset, datafile, data)
+
+  return global_data
+
 
 def makelocal(dataset, datafile, origdata):
   data = []
@@ -68,12 +69,43 @@ def makelocal(dataset, datafile, origdata):
   return data
 
 def makeglobal(dataset, datafile, data):
-  features = defaultdict(int)
-  return data
+  features = {}
 
-def writeglobal(dataset, datafile, data):
-#  outfname = SPATH + dataset + "/" + datafile
-  print "Writing local global features for signature %s/%s." % (dataset, datafile)
+  minx = maxx = miny = maxy = None
+
+  for i, v in enumerate(data):
+    x = v[0]
+    y = v[1]
+    z = v[2]
+
+    if not minx or minx > x:
+      minx = x
+    if not maxx or maxx < x:
+      maxx = x
+    if not miny or miny > y:
+      miny = y
+    if not maxy or maxy < y:
+      maxy = y
+
+  features['00num_samples'] = len(data)
+  features['01height'] = maxy-miny
+  features['02width'] = maxx-minx
+  features['03samples/width'] = 1.0 * features['00num_samples'] / features['02width']
+
+  return ([k[2:] for k in sorted(features.keys())], [v for k, v in sorted(features.items())])
+
+def writeglobal(dataset, data):
+
+  print "Writing local global features for the %s dataset." % (dataset)
+
+  outfname = SPATH + dataset + "/global.data"
+  with open(outfname, "w") as f:
+    header = False
+    for k, v in data.items():
+      if not header:
+        print >>f, "#", " ".join(v[0])
+        header = True
+      print >>f, k, " ".join([str(x) for x in v[1]])
 
 def writelocal(dataset, datafile, data):
 
@@ -85,12 +117,15 @@ def writelocal(dataset, datafile, data):
     for i, v in enumerate(data):
       print >>f, " ".join([str(x) for x in v])
 
-for dataset in os.listdir(F):
-  datadir = F + dataset + "/"
-  if not os.path.exists(SPATH + dataset):
-    os.mkdir(SPATH + dataset)
-  for datafile in os.listdir(datadir):
-    fname = datadir + datafile
-    makefile(dataset, datafile, fname)
+if __name__ == "__main__":
+  for dataset in os.listdir(F):
+    datadir = F + dataset + "/"
+    global_data = {}
+    if not os.path.exists(SPATH + dataset):
+      os.mkdir(SPATH + dataset)
+    for datafile in os.listdir(datadir):
+      fname = datadir + datafile
+      global_data[datafile] = makefile(dataset, datafile, fname)
+#      break
+    writeglobal(dataset, global_data)
 #    break
-#  break
