@@ -72,11 +72,26 @@ def makeglobal(dataset, datafile, data):
   features = {}
 
   minx = maxx = miny = maxy = None
+  xvelsum = 0.0
+  posxvel = 0
+  pendownnum = 0
 
   for i, v in enumerate(data):
     x = v[0]
     y = v[1]
     z = v[2]
+
+    xvel = v[3]
+    yvel = v[4]
+    zvel = v[5]
+
+    xvelsum += xvel
+    if xvel > 0:
+      posxvel += 1
+
+    pendown = True if z > 0 else False
+    if pendown:
+      pendownnum += 1
 
     if not minx or minx > x:
       minx = x
@@ -92,6 +107,11 @@ def makeglobal(dataset, datafile, data):
   features['02width'] = maxx-minx
   features['03samples/width'] = 1.0 * features['00num_samples'] / features['02width']
 
+  features['09avg_x_vel'] = xvelsum / features['00num_samples']
+  features['09var_x_vel'] = xvelsum / features['00num_samples']
+  features['11num_pos_x_vel'] = posxvel
+  features['14pen_down_samples'] = pendownnum
+
   return ([k[2:] for k in sorted(features.keys())], [v for k, v in sorted(features.items())])
 
 def writeglobal(dataset, data):
@@ -103,7 +123,7 @@ def writeglobal(dataset, data):
     header = False
     for k, v in data.items():
       if not header:
-        print >>f, "#", " ".join(v[0])
+        print >>f, "# name", " ".join(v[0])
         header = True
       print >>f, k, " ".join([str(x) for x in v[1]])
 
