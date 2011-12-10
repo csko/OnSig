@@ -1,14 +1,11 @@
-/*
- * Egy tanítóhalmazt reprezentáló osztály.
- */
-
 package Training;
 
 import com.dtw.TimeWarpInfo;
 import com.timeseries.TimeSeries;
+import java.util.ArrayList;
 
 /**
- *
+ * Egy tanítóhalmazt reprezentáló osztály.
  * @author 
  */
 public class TrainingSignature {
@@ -16,7 +13,9 @@ public class TrainingSignature {
     private double minDistance;     //a tanítóhalmaz elemei közötti legkisebb távolság
     private double maxDistance;     //a tanítóhalmaz elemei közötti legnagyobb távolság
     private double [][]distanceMatrix;  //a tanítóhalmaz elemei közötti távolság-mátrix (alsó háromszög mátrix a szimmetria miatt)
-    private TimeSeries []trainingSet;   //tanítóhalmaz elemei
+    private ArrayList<TimeSeries> trainingSet;   //tanítóhalmaz elemei
+    private double avgpenUpTime;  //átlagos idő, amíg a toll fel volt emelve
+    private double avgpenDownTime;  //átlagos idő, amíg a tollal írtunk: az előző és ez adja az össz írás időt
 
     /**
      * A konstruktor a kapott aláírások idősoraiból kiszámítja a tanítóhalmaz
@@ -24,14 +23,15 @@ public class TrainingSignature {
      * @param t - idősorok
      * @param window - ablakméret
      */
-    public TrainingSignature(TimeSeries []t, int window){
-            distanceMatrix = new double[t.length][t.length];
+    public TrainingSignature(ArrayList<TimeSeries> t, int window){
+            distanceMatrix = new double[t.size()][t.size()];
             trainingSet = t;
             double elements = 0;
+            calculateAverageTimes();
             
-            for ( int i = 0 ; i < t.length ; i++) {
+            for ( int i = 0 ; i < t.size() ; i++) {
                 for ( int j = 0 ; j < i ; j++ ) {
-                    final TimeWarpInfo info = com.dtw.FastDTW.getWarpInfoBetween(t[i], t[j], window);
+                    final TimeWarpInfo info = com.dtw.FastDTW.getWarpInfoBetween(t.get(i), t.get(j), window);
                     distanceMatrix[i][j] = info.getDistance();
                     if ( i == 1 && j == 0 ) {
                         minDistance = maxDistance = info.getDistance();
@@ -52,7 +52,7 @@ public class TrainingSignature {
 
     @Override
     public String toString() {
-        String retString = "Tanító halmaz mérete: " + trainingSet.length + "\n";
+        String retString = "Tanító halmaz mérete: " + trainingSet.size() + "\n";
         retString += "Legközelebbi elemek távolsága: " + minDistance + "\n";
         retString += "Legtávolabbi elemek távolsága: " + maxDistance + "\n";
         retString += "Átlagos távolság távolsága: " + averageDistance + "\n";
@@ -83,7 +83,7 @@ public class TrainingSignature {
         this.minDistance = minDistance;
     }
 
-    public TimeSeries[] getTrainingSet() {
+    public ArrayList<TimeSeries> getTrainingSet() {
         return trainingSet;
     }
 
@@ -94,6 +94,25 @@ public class TrainingSignature {
             }
             System.out.println();
         }
+    }
+
+    /**
+     * Kiszámítja az ebben a tanítóhalmazban található minták átlagos
+     * penUp és penDown idejét.
+     */
+    private void calculateAverageTimes() {
+        for ( int i = 0 ; i < this.trainingSet.size() ; i++ ){
+            for ( int j = 0 ; j < this.trainingSet.get(i).size() ; j++ ){
+                if ( (this.trainingSet.get(i).getMeasurementVector(j)[2]) == 0 ) {
+                    this.avgpenUpTime++;
+                } else {
+                    this.avgpenDownTime++;
+                }
+            }
+        }
+        this.avgpenDownTime /= this.trainingSet.size();
+        this.avgpenUpTime /= this.trainingSet.size();
+        
     }
 
 
