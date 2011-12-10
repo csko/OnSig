@@ -119,7 +119,7 @@ public class DTWBasedClassifier {
     public static void main(String []args) {
 
         PrintWriter file; //kimeneti fájlstream
-        double threshold = 15;   //a küszöbérték, aminél legkiegyensúlyozottabb a EER
+        double threshold = 7.75;   //a küszöbérték, aminél legkiegyensúlyozottabb a EER
         String defaultValidSignatureDirectory = "../data-deriv/genuine/";
         
         if ( args.length == 0 ) {   //ha paraméter nélkül futtatjuk, akkor teszteljük
