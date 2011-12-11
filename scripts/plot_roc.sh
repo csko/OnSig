@@ -1,6 +1,5 @@
 #!/bin/bash
 
-export FNAME=$1
 export OUTNAME=$2
 
 gnuplot << gptend
@@ -22,6 +21,7 @@ set yrange [0:1]
 set ylabel "True Positive Rate"
 set xlabel "False Positive Rate"
 
-plot "$FNAME" using 3:2 with lines t 'Anomaly detection (global)', \
+plot "../results/roc.txt" using 3:2 with lines t 'Anomaly detection, Gaussian', \
+     "../results/roc-euc.txt" using 3:2 with lines t 'Anomaly detection, Euclidean', \
      x notitle
 gptend
