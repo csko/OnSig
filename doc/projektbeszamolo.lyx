@@ -1,4 +1,4 @@
-#LyX 1.6.5 created this file. For more info see http://www.lyx.org/
+#LyX 1.6.9 created this file. For more info see http://www.lyx.org/
 \lyxformat 345
 \begin_document
 \begin_header
@@ -97,11 +97,7 @@ forgery
 \end_layout
 
 \begin_layout Standard
-TODO: hány szerző hány aláírás
-\end_layout
-
-\begin_layout Standard
-Az aláírosakt vizualizáltuk, ezeket mutatják a következő ábrák.
+Az aláíroskat vizualizáltuk, ezeket mutatják a következő ábrák.
 \end_layout
 
 \begin_layout Standard
@@ -203,6 +199,10 @@ DTW
  A globális attribútumokra 
 \emph on
 egydimenziós normál eloszlást illesztettünk
+\emph default
+ illetve 
+\emph on
+Euklideszi távolságot számoltunk
 \emph default
 , és egyfajta anomália detekciót végeztünk.
  A végső megoldásunkban ezeket a módszereket szavaztatjuk.
@@ -317,8 +317,12 @@ target "http://code.google.com/p/fastdtw/"
 \begin_layout Standard
 Ez a megvalósítás a hagyományos DTW algoritmust valósítja meg, változtatható
  ablakmérettel.
- Távolság számításhoz a négyzetes Euklideszi algoritmust használja, a bemenő
- adatokat pedig egy rögzített formátumú fájlból olvassa be.
+ Távolság számításhoz a négyzetes 
+\emph on
+Euklideszi algoritmust
+\emph default
+ használja, a bemenő adatokat pedig egy rögzített formátumú fájlból olvassa
+ be.
  Két aláírás távolságának kiszámításakor apróbb módosításoktól eltekintve
  ezt az implementációt használtam.
 \end_layout
@@ -339,27 +343,44 @@ Aláírás osztályok
 
 \begin_layout Standard
 Az aláírásokat a DTW algoritmus használatához elegendő idősorokként tárolni
- (ehhez a csomaghoz tartozó TimeSeries és TimeSeriesPoint osztályokat használtuk
-), azonban szerettünk volna az aláírások felett magasabb absztrakciót biztosítan
-i, ehhez írtunk egy Signature osztályt.
+ (ehhez a csomaghoz tartozó 
+\family typewriter
+TimeSeries
+\family default
+ és 
+\family typewriter
+TimeSeriesPoint
+\family default
+ osztályokat használtuk), azonban szerettünk volna az aláírások felett magasabb
+ absztrakciót biztosítani, ehhez írtunk egy Signature osztályt.
 \end_layout
 
 \begin_layout Standard
 Ez az osztály adattagként eltárolja az aláírás idősorát és biztosít ehhez
  egy lekérdező metódust, aminek köszönhetően kompatibilis lesz az algoritmussal.
- Azonban az eredeti TimeSeries osztály hátránya, hogy egy bemeneti fájl
- teljes egészéből adatsort készít, nem lehet kijelölni, mely értékekre vagyunk
- kíváncsiak.
- A Signature osztály ezért egy előfeldolgozást is végez: csak a szükséges
- adatokat olvassa be a fájlból, és ebből hoz létre idősorokat.
+ Azonban az eredeti 
+\family typewriter
+TimeSeries
+\family default
+ osztály hátránya, hogy egy bemeneti fájl teljes egészéből adatsort készít,
+ nem lehet kijelölni, mely értékekre vagyunk kíváncsiak.
+ A 
+\family typewriter
+Signature
+\family default
+ osztály ezért egy előfeldolgozást is végez: csak a szükséges adatokat olvassa
+ be a fájlból, és ebből hoz létre idősorokat.
 \end_layout
 
 \begin_layout Standard
 Az osztályozónkban végül nem használtuk fel, de a Signature osztály képes
- az aláírást szakaszokra bontani (szakaszhatár a z koordináta értékének
- váltása 0-ról vagy 0-ra, tehát tollfelemelésenként bontjuk fel), ebből
- adódóan a szakasz hosszakat kiszámítani, valamint az egyes aláírásokra
- toll-fent és toll-lent időket számolni.
+ az aláírást szakaszokra bontani (szakaszhatár a 
+\begin_inset Formula $z$
+\end_inset
+
+ koordináta értékének váltása 0-ról vagy 0-ra, tehát tollfelemelésenként
+ bontjuk fel), ebből adódóan a szakasz hosszakat kiszámítani, valamint az
+ egyes aláírásokra toll-fent és toll-lent időket számolni.
 \end_layout
 
 \begin_layout Standard
@@ -422,7 +443,7 @@ Magát a döntési folyamatot is egy külön osztályban valósítottuk meg.
 \begin_inset Formula $T$
 \end_inset
 
-< 
+ < 
 \begin_inset Formula $D\cdot t$
 \end_inset
 
@@ -430,12 +451,27 @@ Magát a döntési folyamatot is egy külön osztályban valósítottuk meg.
 \end_layout
 
 \begin_layout Standard
-Ahol T a tesztelendő aláírás távolsága a halmaztól, D a halmaz elemeinek
- távolsága, t pedig a küszöbérték.
+Ahol 
+\begin_inset Formula $T$
+\end_inset
+
+ a tesztelendő aláírás távolsága a halmaztól, 
+\begin_inset Formula $D$
+\end_inset
+
+ a halmaz elemeinek távolsága, t pedig a küszöbérték.
 \end_layout
 
 \begin_layout Standard
-Az, hogy a T és D mely távolságot jelenti pontosan, függ a döntési eljárástól.
+Az, hogy a 
+\begin_inset Formula $T$
+\end_inset
+
+ és 
+\begin_inset Formula $D$
+\end_inset
+
+ mely távolságot jelenti pontosan, függ a döntési eljárástól.
  Három módra van lehetőség a programunkban: minimális, maximális és átlagos
  távolság.
  Mindháromra futtattunk teszteket, ezek közül az átlagos nagyon gyenge eredményt
@@ -449,10 +485,17 @@ A döntéshozó osztály
 \end_layout
 
 \begin_layout Standard
-A program belépési pontja, és a döntési folyamatot vezérlő osztálya a DTWBasedCl
-assifier osztály.
+A program belépési pontja, és a döntési folyamatot vezérlő osztálya a 
+\family typewriter
+DTWBasedClassifier
+\family default
+ osztály.
  Két fő működése van: kapott teszt- és tanítóadatokra hoz egy döntést és
- ezt kiírja az output.txt fájlba.
+ ezt kiírja az 
+\family typewriter
+output.txt
+\family default
+ fájlba.
  Paraméter nélküli indításkor pedig feltételez egy tanítóadatbázist (amit
  felhasználhattunk a projekt elkészítésekor), és ezekre kiszámítja az EER
  értéket valamint a hozzá tartozó küszöbértéket.
@@ -631,10 +674,6 @@ Globális jellemzők
 \end_layout
 
 \begin_layout Standard
-TODO: ezt előrébb vinni? mennyire használunk globális jellemzőt DTW-ben?
-\end_layout
-
-\begin_layout Standard
 Minden egyes tanulópéldán és bejövő tesztpéldán elvégezzük a lokális jellemzők
  aggregálását.
  Ez főképp a 
@@ -657,15 +696,9 @@ status open
 
 \begin_layout Plain Layout
 \align center
-TODO: kisebb betűméret valahogy
-\end_layout
-
-\begin_layout Plain Layout
-\align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="6" columns="3">
+<lyxtabular version="3" rows="9" columns="2">
 <features>
-<column alignment="center" valignment="top" width="0">
 <column alignment="center" valignment="top" width="0">
 <column alignment="center" valignment="top" width="0">
 <row>
@@ -687,6 +720,8 @@ Magasság (2)
 
 \end_inset
 </cell>
+</row>
+<row>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -696,8 +731,6 @@ Szélesség (3)
 
 \end_inset
 </cell>
-</row>
-<row>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -707,6 +740,8 @@ Szélesség (3)
 
 \end_inset
 </cell>
+</row>
+<row>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -749,6 +784,8 @@ Toll-lent minták száma (14)
 
 \end_inset
 </cell>
+</row>
+<row>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -758,8 +795,6 @@ Maximum nyomás (21)
 
 \end_inset
 </cell>
-</row>
-<row>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -769,6 +804,8 @@ Maximum nyomás pontja (22)
 
 \end_inset
 </cell>
+</row>
+<row>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -786,7 +823,7 @@ Maximum
 \begin_inset Formula $x$
 \end_inset
 
- sebesség (29) 
+ sebesség (29)
 \end_layout
 
 \end_inset
@@ -819,6 +856,8 @@ Maximum
 
 \end_inset
 </cell>
+</row>
+<row>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -832,9 +871,7 @@ Maximum
 
 \end_inset
 </cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -843,6 +880,8 @@ Negatív sebességű pontok száma / 14 (34)
 
 \end_inset
 </cell>
+</row>
+<row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -974,7 +1013,7 @@ Az
 placement H
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -988,13 +1027,42 @@ status collapsed
 \begin_inset Caption
 
 \begin_layout Plain Layout
-A globális módszer FAR és FRR görbéi.
+A Gaussian módszerhez tartozó FAR és FRR görbék.
+ Az EER értéke 
+\begin_inset Formula $0.054$
+\end_inset
+
+, amelyet az 
+\begin_inset Formula $e^{-115,214}$
+\end_inset
+
+ paraméterrel kapunk.
 \end_layout
 
 \end_inset
 
 
 \end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Euklideszi távolság számítása
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Gupta06abstractthe"
+
+\end_inset
+
+alapján történik, a távolság: 
+\begin_inset Formula \[
+\frac{1}{n}\sqrt{\sum_{j=1}^{n}\frac{(x_{j}-\mu_{j})^{2}}{\sigma^{2}}}\]
 
 \end_inset
 
@@ -1003,10 +1071,58 @@ A globális módszer FAR és FRR görbéi.
 
 \begin_layout Standard
 \begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename eer-euc.png
+	width 400pt
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Az Euklideszi távolsághoz tartozó FAR és FRR görbék.
+ Az EER értéke 
+\begin_inset Formula $0.04$
+\end_inset
+
+, amelyet az 
+\begin_inset Formula $0.37$
+\end_inset
+
+ paraméterrel kapunk.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+ROC görbék a három módszerhez
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
 placement H
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -1020,7 +1136,7 @@ status collapsed
 \begin_inset Caption
 
 \begin_layout Plain Layout
-A globális módszer ROC görbéje.
+A tanulók ROC görbéi.
 \end_layout
 
 \end_inset
@@ -1031,48 +1147,58 @@ A globális módszer ROC görbéje.
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-TODO: jó lenne közösen a lokális értékekkel
-\end_layout
-
-\begin_layout Standard
-TODO: ábráról leolvasni az legjobb FRR&FAR és az EER értékeket; esetleg
- ROC görbe alatti területet számolni.
 \end_layout
 
 \begin_layout Section
 Tartalom
 \end_layout
 
-\begin_layout Standard
-TODO: mindegyikről egy rövid leírás, fontosabb fileokról.
- használatról külön kellene a user doksiban.
-\end_layout
-
 \begin_layout Itemize
+
+\family typewriter
 data/
+\family default
+: eredeti adatok
 \end_layout
 
 \begin_layout Itemize
+
+\family typewriter
 data-deriv/
+\family default
+: derivált adatok
 \end_layout
 
 \begin_layout Itemize
+
+\family typewriter
 doc/
+\family default
+: dokumentáció
 \end_layout
 
 \begin_layout Itemize
+
+\family typewriter
 Onsig/
+\family default
+: lokális tanulók
 \end_layout
 
 \begin_layout Itemize
+
+\family typewriter
 scripts/
+\family default
+: segédeszközök, globális tanulók
 \end_layout
 
 \begin_layout Itemize
+
+\family typewriter
 results/
+\family default
+: eredmények adatai
 \end_layout
 
 \begin_layout Section
@@ -1091,10 +1217,6 @@ DTW
 Dokumentáció
 \end_layout
 
-\begin_layout Itemize
-TODO: bővíteni
-\end_layout
-
 \begin_layout Subsection
 Csernai Kornél
 \end_layout
@@ -1108,7 +1230,7 @@ Globális jellemzők elkészítése
 \end_layout
 
 \begin_layout Itemize
-Gauss-görbék illesztése
+Gauss-görbék illesztése, illetve Euklideszi távolság módszer
 \end_layout
 
 \begin_layout Itemize
@@ -1120,7 +1242,6 @@ Dokumentáció
 \end_layout
 
 \begin_layout Itemize
-TODO: bővíteni
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
 bibfiles "onsig"
