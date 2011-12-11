@@ -1,15 +1,19 @@
 #!/usr/bin/env python2
 
+# This file is used to parse the original data files and create 
+# a derived local format along with global features.
+
 import os
 from numpy import array, append
 
-# Data path
+# Data files in the original format are in this directory.
 F = "../data/"
 
-# Save path
+# Save path.
 SPATH="../data-deriv/"
 
 def load_file(fname):
+  """Loads an x,y,z-file and returns a list of tuples."""
   origdata = []
   with open(fname) as f:
     for line in f:
@@ -25,7 +29,7 @@ def load_file(fname):
 def makedata_cached(dataset, datafile, fname, types=['global', 'local']):
   """
   Similar to makedata() except it tries to load global attributes
-  from precomputed files.
+  from precomputed files created by parse.py's main().
   """
 
   if 'global' in types:
@@ -42,7 +46,7 @@ def makedata_cached(dataset, datafile, fname, types=['global', 'local']):
         for line in f:
           w = line[:-1].split()
           if w[0] == idx: # Found the file in the database.
-            data = [float(x) for x in w[1:]] # No name column and convert to float.
+            data = [float(x) for x in w[1:]] # No name column, convert to float.
             break
 
       if data == None: # Not found.
@@ -65,6 +69,11 @@ def makedata_cached(dataset, datafile, fname, types=['global', 'local']):
       return None
 
 def makedata(dataset, datafile, fname):
+  """
+  Normalizes into mass center and initiates local and global feature
+  extraction.
+  """
+
   data = []
 
   origdata = load_file(fname)
@@ -92,6 +101,7 @@ def makedata(dataset, datafile, fname):
   return local_data, global_data
 
 def makelocal(dataset, datafile, origdata):
+  """Differentiates x,y,z local features up to 3 times."""
   data = []
 
   n = len(origdata)
@@ -113,6 +123,15 @@ def makelocal(dataset, datafile, origdata):
   return data
 
 def makeglobal(dataset, datafile, data):
+  """
+  Creates some global features and returns an index header list along with
+  the data computed.
+  The features mostly come from
+  Jonas Richiardi, Hamed Ketabdar, Andrzej Drygajlo:
+  Local and global feature selection for on-line signature verification,
+  In Proc. IAPR 8th International Conference on Document Analysis and
+    Recognition (ICDAR 2005).
+  """
   features = {}
 
   minx = maxx = miny = maxy = maxz = minz = max_dx = max_dy = None
@@ -202,6 +221,9 @@ def makeglobal(dataset, datafile, data):
   return ([k[2:] for k in sorted(features.keys())], [v for k, v in sorted(features.items())])
 
 def writeglobal(dataset, data):
+  """
+  Writes the global features into a file called global.data.
+  """
 
   print "Writing local global features for the %s dataset." % (dataset)
 
@@ -215,6 +237,9 @@ def writeglobal(dataset, data):
       print >>f, k, " ".join([str(x) for x in v[1]])
 
 def writelocal(dataset, datafile, data):
+  """
+  Writes the local features into a file called local.data.
+  """
 
   outfname = SPATH + dataset + "/" + datafile
 
@@ -225,15 +250,20 @@ def writelocal(dataset, datafile, data):
       print >>f, " ".join([str(x) for x in v])
 
 if __name__ == "__main__":
+  # dataset in ['genuine', 'forgery']
   for dataset in os.listdir(F):
     datadir = F + dataset + "/"
     global_data = {}
+    # We'll need this directory for results, create it if it does not exists.
     if not os.path.exists(SPATH + dataset):
       os.mkdir(SPATH + dataset)
+    # For each file in the dataset.
     for datafile in os.listdir(datadir):
       fname = datadir + datafile
+      # Gather local and global features. Collect global features grouped by file name.
       local_data, global_data[datafile] = makedata(dataset, datafile, fname)
       writelocal(dataset, datafile, local_data)
 #      break
+    # When finished loading the database, write the global features into a file.
     writeglobal(dataset, global_data)
 #    break

@@ -45,7 +45,7 @@ def anomaly_classify(test_global, train_global, eps):
   # Compute p(x) = Prod(p(x_j; mu_j, sigma2_j)) = Prod(Gaussian(mu_j, sigma2_j)).
   px = p(test_global, mu, sigma2)
 
-  # Anomaly iff p(x) < eps.
+  # Anomaly (reject) iff p(x) < eps.
   return False if px < eps else True
 
 if __name__ == "__main__":
@@ -67,5 +67,6 @@ if __name__ == "__main__":
     glob = glob[1]
     refs.append(glob)
 
+  # Write 1 if accepted, 0 otherwise.
   with open("output.txt", "w") as f:
     print >>f, 1 if anomaly_classify(test_global, refs, eps) else 0

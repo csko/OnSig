@@ -12,8 +12,14 @@ from math import log
 
 DATADIR = "../data/"
 
+EERFILE="eer.txt"
+ROCFILE="roc.txt"
+
+# Available classifiers.
 methods = {'anomaly': 'python2 anomaly.py %s %s %s'}
-params  = {'anomaly': ['1e-20', '1e-30', '1e-40', '1e-50', '1e-60', '1e-70']}
+
+# Parameters to try.
+params  = {'anomaly': ['1e-30', '1e-40', '1e-50', '1e-60']}
 
 def find_genuine():
   """Returns genuine signature file names grouped by the author."""
@@ -43,15 +49,24 @@ def find_forgery():
 
   return res
 
-def simple_test(gen_list, for_list, method, eps):
-  """Evaluate for a test set using a reference training set."""
+def simple_test(gen_list, for_list, method, eps, handlers):
+  """
+  Evaluate for a test set using a reference training set.
+  Uses the whole forgery database and does leave-one-out when working 
+  out the FRR.
+  This method writes the results to eer and roc file handlers for later
+  use.
+  """
 
   far = 0
   far_n = 0
 
+  # True Positive, False Positive, True Negative, False Negative
+  tp = fp = tn = fn = 0
+
   # For each author.
   for author, gens in gen_list.items():
-    # For each test subject.
+    # For each forgery test subject.
     for test in for_list[author]:
       # Evaluate using the specified method.
       cmd = method % (eps, test, ' '.join(gens))
@@ -60,9 +75,11 @@ def simple_test(gen_list, for_list, method, eps):
 
       # Read results.
       result = int(open("output.txt").read(1))
+      # 1 iff accepted; these should not be accepted
       if result == 1:
-        far += 1
-      far_n += 1
+        fp += 1
+      else:
+        tn += 1
 #      break
 #    break
 
@@ -83,15 +100,25 @@ def simple_test(gen_list, for_list, method, eps):
 
       # Read results.
       result = int(open("output.txt").read(1))
+      # 1 iff accepted; these should be accepted
       if result == 0:
-        frr += 1
-      frr_n += 1
+        fn += 1
+      else:
+        tp += 1
 #      break
 #    break
 
-  far = 1.0 * far / far_n
-  frr = 1.0 * frr / frr_n
-  print "%f %f %f" % (log(float(eps)), far, frr)
+  far = 1.0 * fp / (fp + tn)
+  frr = 1.0 * fn / (fn + tp)
+
+  eertxt = handlers[0]
+  roctxt = handlers[1]
+
+  print >>eertxt, "%f %f %f" % (log(float(eps)), far, frr)
+  print >>roctxt, "%f %f %f" % (log(float(eps)), tp / (tp + fn), fp / (tn + fp))
+
+  eertxt.flush()
+  roctxt.flush()
 
 if __name__ == "__main__":
   gen_list = find_genuine()
@@ -102,6 +129,20 @@ if __name__ == "__main__":
 
   method = 'anomaly'
 
-  print '# log(eps) FAR FRR'
+  # Open log files.
+  eertxt = open(EERFILE, "w")
+  roctxt = open(ROCFILE, "w")
+
+  handlers = (eertxt, roctxt)
+
+  # Write headers.
+  print >>eertxt, '# log(eps) FAR FRR'
+  print >>roctxt, '# log(eps) TPR FPR'
+
+  # Try for each parameter and write the resulting data points.
   for eps in params[method]:
-    simple_test(gen_list, for_list, methods[method], eps)
+    simple_test(gen_list, for_list, methods[method], eps, handlers)
+
+  # Close log files.
+  eertxt.close()
+  roctxt.close()
