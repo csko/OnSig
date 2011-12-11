@@ -18,6 +18,7 @@ def fit_Gaussian(data):
 
   mu = 1.0 * (sum(x)) / m
   sigma2 = 1.0 * sum((x-mu)**2) / m
+  # TODO: if sigma2 == 0.0, error.
 
   return mu, sigma2
 
@@ -48,15 +49,15 @@ def anomaly_classify(test_global, train_global, eps):
   return False if px < eps else True
 
 if __name__ == "__main__":
-  if len(sys.argv) < 3:
-    print "Not enough parameters."
+  if len(sys.argv) < 4:
+    print "Usage: %s EPS TRAIN TEST1 [TEST2 [TEST ...]]" % sys.argv[0]
     quit()
 
-  local, test_global = makedata('?', sys.argv[1], sys.argv[1])
+  local, test_global = makedata('?', sys.argv[2], sys.argv[2])
   test_global = test_global[1]
   refs = []
 
-  for i in range(2, len(sys.argv)):
+  for i in range(3, len(sys.argv)):
     local, glob = makedata('genuine', sys.argv[i], sys.argv[i])
     glob = glob[1]
     refs.append(glob)
