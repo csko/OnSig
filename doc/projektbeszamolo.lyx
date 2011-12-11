@@ -1,0 +1,871 @@
+#LyX 1.6.9 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\language magyar
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Online aláírásfelismerés projekt
+\end_layout
+
+\begin_layout Author
+Bordé Sándor, Csernai Kornél
+\end_layout
+
+\begin_layout Section
+Feladat
+\end_layout
+
+\begin_layout Standard
+Feladatunk egy online aláírásfelismerési verseny tanítóadataihoz versenyképes
+ tanuló módszereket adni
+\begin_inset CommandInset citation
+LatexCommand cite
+key "DBLP:conf/icdar/LiwickiMHCBSBF11"
+
+\end_inset
+
+.
+ A verseny leírása a http://forensic.to/webhome/afha/SigComp.html oldalon
+ található.
+ Megoldásunkhoz csupán a "Holland online
+\begin_inset Quotes erd
+\end_inset
+
+ adatbázist használhattuk.
+\end_layout
+
+\begin_layout Section
+Az adatbázis
+\end_layout
+
+\begin_layout Standard
+Az adatbázis WACOM Intuos3 A3 Wide USB Pen Tablet típusú eszközzel készült,
+ amely x és y koordinátákat illetve nyomásértékeket rögzít, 200Hz frekvenciával.
+\end_layout
+
+\begin_layout Standard
+Az adatokat letöltöttük, kicsomagoltuk, és áttekintettük.
+ Az adatbázis tartalmaz egy valós aláírás adatbázist (
+\emph on
+genuine
+\emph default
+) szerzők egy csoportjától.
+ Ezen szerzők aláírásait próbálták gyakorlott hamisítók reprodukálni (
+\emph on
+forgery
+\emph default
+).
+\end_layout
+
+\begin_layout Standard
+TODO: hány szerző hány aláírás
+\end_layout
+
+\begin_layout Standard
+Az aláírosakt vizualizáltuk, ezeket mutatják a következő ábrák.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename 0_002_03.HWR.png
+	width 200pt
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename 002_03.HWR.png
+	width 200pt
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Egy aláírás nyomásértékekkel és anélkül.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename 0_177_002_01.HWR.png
+	width 200pt
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename 177_002_01.HWR.png
+	width 200pt
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Az 1.
+ ábrához tartozó egy hamisítás nyomásértékekkel és anélkül.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Megoldásunk
+\end_layout
+
+\begin_layout Standard
+Megoldásunk többféle módon közelíti meg a problémát.
+ Egyrészt, az adott lokális jellemzőket közvetlenül felhasználva tanítókat
+ építettünk: 
+\emph on
+DTW, Improved DTW
+\emph default
+.
+ Másrészt, a lokális attribútumokat egy-egy aláíráshoz aggregáltuk és így
+ globális attribútumokat kaptunk.
+ A globális attribútumokra 
+\emph on
+egydimenziós normál eloszlást illesztettünk
+\emph default
+, és egyfajta anomália detekciót végeztünk.
+ A végső megoldásunkban ezeket a módszereket szavaztatjuk.
+\end_layout
+
+\begin_layout Standard
+Szóba jött még 
+\emph on
+Rejtett Markov Modell
+\emph default
+ és 
+\emph on
+Neurális Háló
+\emph default
+ alapú implementáció is, de ezeket időhiány miatt nem próbáltuk ki.
+ Továbbá, szerettünk volna néhány megoldásra koncentrálni.
+\end_layout
+
+\begin_layout Standard
+A megvalósítás 
+\emph on
+Java, Python, BASH
+\emph default
+, és 
+\emph on
+gnuplot
+\emph default
+ eszközök segítségével történt.
+ A lokális attribútumok feldolgozása és a globális attribútumok létrehozása
+ Python scriptek segítségével történt.
+ A DTW és Improved DTW implementációk teljes egészében Java nyelven íródtak.
+ Az ábrák elkészítéséhez és egyéb segédfeladatok elvégzéséhez a Python,
+ BASH és gnuplot eszközöket használtuk.
+ Munkánkat a git verziókövető rendszerrel kezeltük.
+\end_layout
+
+\begin_layout Subsection
+Lokális jellemzők
+\end_layout
+
+\begin_layout Standard
+Adottak voltak az 
+\begin_inset Formula $x,y,z$
+\end_inset
+
+ értékek, viszont úgy láttuk, hogy hasznos lenne további, redundáns attribútumok
+at is kinyerni, ezzel segítve a tanulóalgoritmusokat.
+ A három érték első, második, és harmadik deriváltjait kiszámoltuk a következőké
+ppen:
+\begin_inset Formula \[
+\Delta^{1}\left[f\right](x)=x_{i+1}-x_{i-1}\]
+
+\end_inset
+
+
+\begin_inset Formula \[
+\Delta^{2}\left[f\right](x)=x_{i+1}-2x_{i}+x_{i-1}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\Delta^{3}\left[f\right](x)=\frac{x_{i+2}-2x_{i+1}+2_{i-1}-x_{i-2}}{2}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Tehát 
+\begin_inset Formula $3+3*3=12$
+\end_inset
+
+ lokális attribútummal dolgoztunk.
+ Implicite jelen volt az idő értéke is, azaz, hogy hanyadik adatpontról
+ van szó az aláírásmintán belül.
+\end_layout
+
+\begin_layout Subsubsection
+DTW
+\end_layout
+
+\begin_layout Standard
+TODO: ez az évköziről lett kimásolva, frissíteni kell
+\end_layout
+
+\begin_layout Itemize
+DTW algoritmust használtunk az összehasonlításra
+\end_layout
+
+\begin_layout Itemize
+Interneten találtunk egy DTW implementációt
+\end_layout
+
+\begin_layout Itemize
+A tanítóhalmaznak (a feladatkiírás ajánlása szerint) az aláírások felét
+ választottuk (50-50)
+\end_layout
+
+\begin_layout Itemize
+A tanítóhalmaz osztály meghatározza az elemek közötti távolságokat, előállítja
+ a távolságmátrixot
+\end_layout
+
+\begin_layout Itemize
+Eltárolja a legkisebb és legnagyobb távolságot, valamint kiszámítja az átlagos
+ távolságo
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+globális tulajdonságok
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+TODO: itt már az ékezet is eltűnt...
+\end_layout
+
+\begin_layout Itemize
+Az osztalyozo ezutan kiszamitja a kapott alairas tavolsagat a tanító halmaz
+ osszes elemet.
+\end_layout
+
+\begin_layout Itemize
+Itt is elmenti a min, max es atlagos tavolsagot
+\end_layout
+
+\begin_layout Itemize
+Ez utan osztalyozza a teszt alairast a tanitohalmaz ertekeihez hasonlitva
+\end_layout
+
+\begin_layout Itemize
+Ket tipusu osztalyozast neztunk meg
+\end_layout
+
+\begin_layout Itemize
+Ha a teszt alairas min, max, atlag erteke kisebb, mint a tanito halmazban
+ talalhato elemek tavolsagainak minimuma, maximuma, atlaga, akkor elfogadjuk
+\end_layout
+
+\begin_layout Itemize
+Ha a fenti 3 tulajdonsagbol legalabb kett.
+ kisebb, mint a tanitohalmaz ertekei, akkor elfogadjuk
+\end_layout
+
+\begin_layout Subsubsection
+Improved DTW
+\end_layout
+
+\begin_layout Subsection
+Globális jellemzők
+\end_layout
+
+\begin_layout Standard
+TODO: ezt előrébb vinni? mennyire használunk globális jellemzőt DTW-ben?
+\end_layout
+
+\begin_layout Standard
+Minden egyes tanulópéldán és bejövő tesztpéldán elvégezzük a lokális jellemzők
+ aggregálását.
+ Ez főképp a 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Richiardi05localand"
+
+\end_inset
+
+ alapján történt.
+ A felhasznált jellemzők:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+TODO: kisebb betűméret valahogy
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="3">
+<features>
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Minták száma (1)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Magasság (2)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Szélesség (3)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1 / 3 (5)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Átlagos 
+\begin_inset Formula $x$
+\end_inset
+
+ sebesség (9)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Pozitív sebességű pontok száma (11)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Toll-lent minták száma (14)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Átlagos nyomás (20)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Maximum nyomás (21)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Maximum nyomás pontja (22)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Nyomás terjedelem (28)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Maximum 
+\begin_inset Formula $x$
+\end_inset
+
+ sebesség (29) 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Átlagos 
+\begin_inset Formula $x$
+\end_inset
+
+ gyorsulás (30)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Maximum 
+\begin_inset Formula $y$
+\end_inset
+
+ sebesség (31)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Átlagos 
+\begin_inset Formula $y$
+\end_inset
+
+ sebesség (32)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Negatív sebességű pontok száma / 14 (34)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Pozitív sebességű pontok száma / 14 (37)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+A felhasznált globális jellemzők.
+ Zárójelben a 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Richiardi05localand"
+
+\end_inset
+
+ cikkben szereplő sorszám.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Gauss-görbék illesztésén alapuló módszer
+\end_layout
+
+\begin_layout Standard
+Ezen módszer esetében a globális attribútumokat tartalmazó tanító vektorokra
+ először normális eloszlást illesztünk:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\mu=\frac{1}{m}\sum_{i=1}^{m}x^{(i)},\]
+
+\end_inset
+
+
+\begin_inset Formula \[
+\sigma^{2}=\frac{1}{m}\sum_{i=1}^{m}(x^{(i)}-\mu)^{2}.\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Ezután, ha egy ismeretlen teszt példányt kapunk, akkor elkészítjük annak
+ globális jellemzővektorát (
+\begin_inset Formula $x$
+\end_inset
+
+), majd kiszámítjuk annak valószínűségét, hogy a komponensek külön-külön
+ a megfelelő eloszlásba tartoznak:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+p(x)=\prod_{j}^{n}p(x_{j};\mu_{j},\sigma_{j}^{2})=\prod_{j}^{n}\frac{1}{\sqrt{2\pi}\sigma_{j}}\exp(-\frac{(x_{j}-\mu_{j})^{2}}{2\sigma_{j}^{2}}).\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Választunk egy 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+ küszöbértéket, az 
+\begin_inset Formula $x$
+\end_inset
+
+ aláírást hamisítványnak tekintjük akkor és csak akkor, ha 
+\begin_inset Formula \[
+p(x)<\epsilon.\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Az 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+ érték kompromisszumot jelent, amely a FAR és FRR értékek közötti átmenetet
+ meghatározza.
+ A következő ábrákat keresztvalidációs kiértékeléssel kaptuk.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename eer_G.png
+	width 400pt
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+A globális módszer FAR és FRR görbéi.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename roc_G.png
+	width 400pt
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+A globális módszer ROC görbéje.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+TODO: jó lenne közösen a lokális értékekkel
+\end_layout
+
+\begin_layout Standard
+TODO: ábráról leolvasni az legjobb FRR&FAR és az EER értékeket; esetleg
+ ROC görbe alatti területet számolni.
+\end_layout
+
+\begin_layout Section
+Tartalom
+\end_layout
+
+\begin_layout Standard
+TODO: mindegyikről egy rövid leírás, fontosabb fileokról.
+ használatról külön kellene a user doksiban.
+\end_layout
+
+\begin_layout Itemize
+data/
+\end_layout
+
+\begin_layout Itemize
+data-deriv/
+\end_layout
+
+\begin_layout Itemize
+doc/
+\end_layout
+
+\begin_layout Itemize
+Onsig/
+\end_layout
+
+\begin_layout Itemize
+scripts/
+\end_layout
+
+\begin_layout Itemize
+results/
+\end_layout
+
+\begin_layout Section
+Feladatmegosztás
+\end_layout
+
+\begin_layout Subsection
+Bordé Sándor
+\end_layout
+
+\begin_layout Itemize
+DTW
+\end_layout
+
+\begin_layout Itemize
+Improved DTW
+\end_layout
+
+\begin_layout Itemize
+Dokumentáció
+\end_layout
+
+\begin_layout Itemize
+TODO: bővíteni
+\end_layout
+
+\begin_layout Subsection
+Csernai Kornél
+\end_layout
+
+\begin_layout Itemize
+Lokális jellemzők feldolgozása
+\end_layout
+
+\begin_layout Itemize
+Globális jellemzők elkészítése
+\end_layout
+
+\begin_layout Itemize
+Gauss-görbék illesztése
+\end_layout
+
+\begin_layout Itemize
+FAR-, FRR-, és ROC görbék ábrázolása
+\end_layout
+
+\begin_layout Itemize
+Dokumentáció
+\end_layout
+
+\begin_layout Itemize
+TODO: bővíteni
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "onsig"
+options "plain"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
