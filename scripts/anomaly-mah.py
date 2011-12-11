@@ -5,20 +5,24 @@
 # decides if the test signature is an outlier.
 
 import sys
-from numpy import array, pi, exp, sqrt, cov, transpose
+from numpy import array, pi, exp, sqrt, cov, transpose, mean, dot
 from math import isnan, log
 
 from parse import *
 
 def mahalanobis(x, data):
-  """Calculates the Mahalanobis distance. Unfinished."""
+  """Calculates the Mahalanobis distance."""
 
   x = array(x)
   data = array(data)
-  m = len(x)
+
   S = cov(data, rowvar = 0) # Covariance matrix of the training data.
-  res = dot(dot(x-data, S**-1), (x-data).T)
-  return 0.0 # TODO
+  means = mean(data, axis=0) # Means of the training data.
+
+  res = dot(dot((x-means), S**-1), (x-means).T) # Squared Mahalanobis distance.
+  print res
+
+  return res
 
 def anomaly_classify(test_global, train_global, eps):
 
