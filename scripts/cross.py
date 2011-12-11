@@ -115,7 +115,7 @@ def simple_test(gen_list, for_list, method, eps, handlers):
   roctxt = handlers[1]
 
   print >>eertxt, "%f %f %f" % (log(float(eps)), far, frr)
-  print >>roctxt, "%f %f %f" % (log(float(eps)), tp / (tp + fn), fp / (tn + fp))
+  print >>roctxt, "%f %f %f" % (log(float(eps)), 1.0 * tp / (tp + fn), 1.0 * fp / (tn + fp))
 
   eertxt.flush()
   roctxt.flush()
