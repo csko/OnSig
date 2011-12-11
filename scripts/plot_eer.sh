@@ -14,14 +14,14 @@ set style line 3 lt 3 lw 1 pt 3 lc rgb "green"
 set style line 4 lt 3 lw 1 pt 3 lc rgb "orange"
 
 #set logscale x
-set xrange [0:1]
-set yrange [0:1]
+set xrange [*:*]
+set yrange [*:*]
 
 #set title "$FNAME"
 
-set ylabel "True Positive Rate"
-set xlabel "False Positive Rate"
+set ylabel "Atlagos ertekek"
+set xlabel "log(epsilon) kuszobertek"
 
-plot "$FNAME" using 3:2 with lines t 'Anomaly detection (global)', \
-     x notitle
+plot "$FNAME" using 1:2 with lines t 'FAR', \
+     "$FNAME" using 1:3 with lines t 'FRR'
 gptend
