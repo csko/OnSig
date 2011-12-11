@@ -104,6 +104,13 @@ public class Signature {
         this.segments.set(index, segmentResampled); //cserélem a szegmenst
     }
 
+    /**
+     * Létrehozza az aláírást a createTimeSeries metódus
+     * meghívásával.
+     * @param file beolvasandó fájl neve
+     * @param numOfPoints beolvasandó pontok száma
+     * @param cols beolvasandó oszlopok
+     */
     public Signature(String file, int numOfPoints, int []cols) {
         try {
             createTimeSeries(file, numOfPoints, cols);
@@ -114,6 +121,15 @@ public class Signature {
         }
     }
 
+    /**
+     * A konstruktor hívja meg. Egy adott fájlból beolvassa az adatokat, és
+     * létrehozza az idősor objektumokat.
+     * @param file beolvasandó fájl neve
+     * @param numOfPoints beolvasandó adatok száma
+     * @param cols a beolvasandó adatok mely oszlopokban vannak, így nem szükséges egymás utáni oszlopokat olvasni
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
     public void createTimeSeries(String file, int numOfPoints, int []cols) throws FileNotFoundException, IOException {
         BufferedReader filein = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
         String line;
@@ -200,6 +216,10 @@ public class Signature {
         filein.close();
     }
 
+    /**
+     * Visszaadja az aláírást teljes egészében, szegmentálatlanul.
+     * @return az aláírás teljes idősora
+     */
     public TimeSeries getWholeSignature() {
         return wholeSignature;
     }

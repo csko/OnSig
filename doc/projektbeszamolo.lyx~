@@ -601,31 +601,6 @@ Végül további apróbb javulást értünk el, ha csak a koordináták első de
  használtuk mind a 12 adat helyett.
 \end_layout
 
-\begin_layout Subsubsection
-További javítási ötletek
-\end_layout
-
-\begin_layout Standard
-Menet közben felmerültek további javítási ötletek.
- 
-\end_layout
-
-\begin_layout Enumerate
-érdemes kipróbálni az egyéni küszöbértéket az egyes aláírókhoz
-\end_layout
-
-\begin_layout Enumerate
-attribútumok különféle kombinációit megvizsgálni
-\end_layout
-
-\begin_layout Enumerate
-Maximális távolságot a minimális távolsággal összevetni
-\end_layout
-
-\begin_layout Enumerate
-Improved DTW algoritmust megvalósítani
-\end_layout
-
 \begin_layout Subsection
 Globális jellemzők
 \end_layout

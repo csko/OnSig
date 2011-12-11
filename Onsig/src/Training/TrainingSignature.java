@@ -1,7 +1,6 @@
 package Training;
 
 import com.dtw.TimeWarpInfo;
-import com.timeseries.TimeSeries;
 import java.util.ArrayList;
 
 /**
