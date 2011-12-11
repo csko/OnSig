@@ -76,7 +76,7 @@ public class FastDtwTest
           double threshold = t;
           //double threshold = 0.15;
           
-          for ( int j = 0 ; j < 16 ; j++ ) {    //16 aláírónk van
+          /*for ( int j = 0 ; j < 16 ; j++ ) {    //16 aláírónk van
               try {
                   ArrayList<TimeSeries> tg = new ArrayList<TimeSeries>(12); //valós aláírások megfigyelési sora
                   //String filenamepref = "0";
@@ -84,13 +84,13 @@ public class FastDtwTest
                   //filenamepref += "_";
                   for ( int i = 0 ; i < 12  ; i++ ) {   //a helyes aláírások fele lesz a training halmaz
                       //String filename = filenamepref;
-                      /*if ( i < 10 ) {
+                      if ( i < 10 ) {
                           filename += "0";
                           System.out.println(i);
-                      }*/
+                      }
 
-                      /*filename += (i+1);
-                      System.out.println(filename);*/
+                      filename += (i+1);
+                      System.out.println(filename);
                       final TimeSeries tsI = new TimeSeries("../data-deriv/genuine/00"+(j+1)+"_"+(i+1)+".HWR", false, false, ' ');  //adott fájlból megfigyelést csinál
                       tg.add(i, tsI);  //elteszem a megfigyelést
                   }
@@ -103,8 +103,8 @@ public class FastDtwTest
 
                   ArrayList<String> currentForgeries = new ArrayList<String>(); //hamisítványokat tartalmazó fájlok
                   for ( int i = 0 ; i < files.length ; i++ ) {
-                      /*String filename = filenamepref;
-                      filename += (i<10)?"0"+(i+1):(i+1);*/
+                      String filename = filenamepref;
+                      filename += (i<10)?"0"+(i+1):(i+1);
                       if ( Pattern.matches("[0-9]*_00"+(i+1)+"_[0-9]*.HWR", files[i]) ) //adott emberhez tartozó hamisítványok leválogatása
                         currentForgeries.add(files[i]);
 
@@ -118,8 +118,8 @@ public class FastDtwTest
 
                   
                   for ( int i = 12 ; i < 24 ; i++ ) {   //nézzük a valós aláírások teszthalmazát
-                    /*String filename = filenamepref;
-                    filename += (i<10)?"0"+(i+1):(i+1);*/
+                    String filename = filenamepref;
+                    filename += (i<10)?"0"+(i+1):(i+1);
                     goodtestSize++; //jó aláírások darabszáma
                     final TimeSeries tsI = new TimeSeries("../data-deriv/genuine/00"+(j+1)+"_"+(i+1)+".HWR", false, false, ' ');    //kinyerjük a jó aláírás megfigyelését
 
@@ -137,7 +137,7 @@ public class FastDtwTest
 
                   }
 
-                  /* menjünk végig a hamis aláírásokon is*/
+                  //menjünk végig a hamis aláírásokon is
                   for ( int i  = 0 ; i < tf.length ; i++ ) {
                     forgtestSize++;
                     int min = cl.isValidSignature(tf[i], Integer.parseInt(args[0]), DTWClassifier.MIN);
@@ -182,7 +182,7 @@ public class FastDtwTest
           double frr = (1.0-(mingood/goodtestSize));
           double far = (minbad/forgtestSize);
           System.out.println(frr + " " + far);
-          /*if ( (1.0-(mingood/goodtestSize)) > (minbad/forgtestSize) ) {
+          if ( (1.0-(mingood/goodtestSize)) > (minbad/forgtestSize) ) {
               //start = t + step;
               end = t;
               //step /= 10;
@@ -192,7 +192,7 @@ public class FastDtwTest
           } else if ( (1.0-(mingood/goodtestSize)) < (mingood/forgtestSize) ) {
               start = t;
               isEnd = false;
-          }*/
+          }
           
 
           file.println("Threshold: " + threshold);
@@ -213,12 +213,12 @@ public class FastDtwTest
              if ( step == 0.0 )
                 break;
 
-             /*if ( isEnd ) {
+             if ( isEnd ) {
                  System.out.println("Nem léptettük a thresholdot, kilépünk.");
                  break;
              }*/
           }
-          file.close();
+          //file.close();
       }  // end main()
 
 

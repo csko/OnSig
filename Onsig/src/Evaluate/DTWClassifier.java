@@ -55,10 +55,10 @@ public class DTWClassifier {
             double maxDistance = 0; //legnagyobb
             double averageDistance = 0; //átlagos távolság
 
-            ArrayList<TimeSeries> genuineSigs = genuine.getTrainingSet();
+            ArrayList<signature.Signature> genuineSigs = genuine.getTrainingSet();
             /* Vesszük a tanítóhalmaz összes elemétől vett távolságot */
             for ( int i = 0 ; i < genuineSigs.size() ; i++) {
-                    final TimeWarpInfo info = com.dtw.FastDTW.getWarpInfoBetween(genuineSigs.get(i), toTest, window);
+                    final TimeWarpInfo info = com.dtw.FastDTW.getWarpInfoBetween(genuineSigs.get(i).getWholeSignature(), toTest, window);
                     if ( i == 0 )  //első elempár esetén inicializálás
                         minDistance = maxDistance = info.getDistance();
                     
