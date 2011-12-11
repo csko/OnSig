@@ -53,14 +53,19 @@ if __name__ == "__main__":
     print "Usage: %s EPS TRAIN TEST1 [TEST2 [TEST ...]]" % sys.argv[0]
     quit()
 
-  local, test_global = makedata('?', sys.argv[2], sys.argv[2])
+  eps = float(sys.argv[1])
+
+  #local, test_global = makedata('?', sys.argv[2], sys.argv[2]) # non-cached
+  test_global = makedata_cached('?', sys.argv[2], sys.argv[2], ['global']) # cached
+
   test_global = test_global[1]
   refs = []
 
   for i in range(3, len(sys.argv)):
-    local, glob = makedata('genuine', sys.argv[i], sys.argv[i])
+#    local, glob = makedata('genuine', sys.argv[i], sys.argv[i]) # non-cached
+    glob = makedata_cached('genuine', sys.argv[i], sys.argv[i], ['global']) # cached
     glob = glob[1]
     refs.append(glob)
 
   with open("output.txt", "w") as f:
-    print >>f, 1 if anomaly_classify(test_global, refs, 1e-70) else 0
+    print >>f, 1 if anomaly_classify(test_global, refs, eps) else 0
