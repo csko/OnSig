@@ -22,6 +22,47 @@ def load_file(fname):
       origdata.append(array([x, y, z]))
   return origdata
 
+def makedata_cached(dataset, datafile, fname, types=['global', 'local']):
+  """
+  Similar to makedata() except it tries to load global attributes
+  from precomputed files.
+  """
+
+  if 'global' in types:
+    p = SPATH + dataset + "/global.data"
+
+    if not os.path.exists(p): # No database exists.
+      local_data, global_data = makedata(dataset, datafile, fname)
+    else:
+      # Strip directories.
+      idx = fname.split("/")[-1]
+      data = None
+      with open(p) as f:
+        header = f.readline()[:-1].split() # not completely correct header
+        for line in f:
+          w = line[:-1].split()
+          if w[0] == idx: # Found the file in the database.
+            data = [float(x) for x in w[1:]] # No name column and convert to float.
+            break
+
+      if data == None: # Not found.
+        local_data, global_data = makedata(dataset, datafile, fname)
+      else:
+        global_data = (header, data)
+
+  if 'local' in types:
+    pass # Not implemented yet.
+
+  if 'global' in types:
+    if 'local' in types:
+      return global_data, local_data
+    else:
+      return global_data
+  else:
+    if 'local' in types:
+      return local_data
+    else:
+      return None
 
 def makedata(dataset, datafile, fname):
   data = []
