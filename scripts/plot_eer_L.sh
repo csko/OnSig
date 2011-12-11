@@ -17,10 +17,10 @@ set style line 4 lt 3 lw 1 pt 3 lc rgb "orange"
 set xrange [*:*]
 set yrange [*:*]
 
-set title "$FNAME"
+#set title "$FNAME"
 
 set ylabel "Atlagos ertekek"
-set xlabel "log(epsilon) kuszobertek"
+set xlabel "kuszobertek"
 
 plot "$FNAME" using 1:2 with lines t 'FAR', \
      "$FNAME" using 1:3 with lines t 'FRR'
