@@ -205,7 +205,8 @@ egydimenziós normál eloszlást illesztettünk
 Euklideszi távolságot számoltunk
 \emph default
 , és egyfajta anomália detekciót végeztünk.
- A végső megoldásunkban ezeket a módszereket szavaztatjuk.
+ A végső megoldásunkban szavaztatni szerettünk volna, azonban időhiány miatt
+ csupán a lokális tanítót használjuk.
 \end_layout
 
 \begin_layout Standard
