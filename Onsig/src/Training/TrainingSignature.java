@@ -13,7 +13,7 @@ public class TrainingSignature {
     private double minDistance;     //a tanítóhalmaz elemei közötti legkisebb távolság
     private double maxDistance;     //a tanítóhalmaz elemei közötti legnagyobb távolság
     private double [][]distanceMatrix;  //a tanítóhalmaz elemei közötti távolság-mátrix (alsó háromszög mátrix a szimmetria miatt)
-    private ArrayList<TimeSeries> trainingSet;   //tanítóhalmaz elemei
+    private ArrayList<signature.Signature> trainingSet;   //tanítóhalmaz elemei
     private double avgpenUpTime;  //átlagos idő, amíg a toll fel volt emelve
     private double avgpenDownTime;  //átlagos idő, amíg a tollal írtunk: az előző és ez adja az össz írás időt
 
@@ -23,7 +23,7 @@ public class TrainingSignature {
      * @param t - idősorok
      * @param window - ablakméret
      */
-    public TrainingSignature(ArrayList<TimeSeries> t, int window){
+    public TrainingSignature(ArrayList<signature.Signature> t, int window){
             distanceMatrix = new double[t.size()][t.size()];
             trainingSet = t;
             double elements = 0;
@@ -31,7 +31,7 @@ public class TrainingSignature {
             
             for ( int i = 0 ; i < t.size() ; i++) {
                 for ( int j = 0 ; j < i ; j++ ) {
-                    final TimeWarpInfo info = com.dtw.FastDTW.getWarpInfoBetween(t.get(i), t.get(j), window);
+                    final TimeWarpInfo info = com.dtw.FastDTW.getWarpInfoBetween(t.get(i).getWholeSignature(), t.get(j).getWholeSignature(), window);
                     distanceMatrix[i][j] = info.getDistance();
                     if ( i == 1 && j == 0 ) {
                         minDistance = maxDistance = info.getDistance();
@@ -83,7 +83,7 @@ public class TrainingSignature {
         this.minDistance = minDistance;
     }
 
-    public ArrayList<TimeSeries> getTrainingSet() {
+    public ArrayList<signature.Signature> getTrainingSet() {
         return trainingSet;
     }
 
@@ -102,8 +102,8 @@ public class TrainingSignature {
      */
     private void calculateAverageTimes() {
         for ( int i = 0 ; i < this.trainingSet.size() ; i++ ){
-            for ( int j = 0 ; j < this.trainingSet.get(i).size() ; j++ ){
-                if ( (this.trainingSet.get(i).getMeasurementVector(j)[2]) == 0 ) {
+            for ( int j = 0 ; j < this.trainingSet.get(i).getWholeSignature().size() ; j++ ){
+                if ( (this.trainingSet.get(i).getWholeSignature().getMeasurementVector(j)[2]) == 0 ) {
                     this.avgpenUpTime++;
                 } else {
                     this.avgpenDownTime++;

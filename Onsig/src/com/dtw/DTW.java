@@ -428,7 +428,8 @@ catch (Exception e)
       for (int x=0; x<vector1.length; x++)
           sqSum += Math.pow(vector1[x]-vector2[x], 2.0);
 
-      return Math.pow(Math.sqrt(sqSum), 2.0);
+      //return Math.pow(Math.sqrt(sqSum), 2.0);
+      return Math.sqrt(sqSum);
    }  // end class euclideanDist(..)
 
 }  // end class DtwTest

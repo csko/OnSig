@@ -1,0 +1,16 @@
+Threshold: 7.75
+MAX-MAX, normal Euklideszi táv
+Osszesitett FRR: 0.049999999999999996 FAR: 0.5851325757575758
+Threshold: 5.0
+MAX-MAX, normal Euklideszi táv
+Osszesitett FRR: 0.075 FAR: 0.32130681818181817
+Threshold: 2.5
+MAX-MAX, normal Euklideszi táv
+Osszesitett FRR: 0.15416666666666665 FAR: 0.02395833333333333
+Threshold: 3.75
+MAX-MAX, normal Euklideszi táv
+Osszesitett FRR: 0.1 FAR: 0.17291666666666666
+Threshold: 2.8
+MAX-MAX, normal Euklideszi táv
+Osszesitett FRR: 0.14999999999999997 FAR: 0.06354166666666666
+
