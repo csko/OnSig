@@ -9,10 +9,8 @@ F = "../data/"
 # Save path
 SPATH="../data-deriv/"
 
-def makefile(dataset, datafile, fname):
+def load_file(fname):
   origdata = []
-  data = []
-
   with open(fname) as f:
     for line in f:
       w = line.split()
@@ -22,16 +20,24 @@ def makefile(dataset, datafile, fname):
       z = int(w[2])
 
       origdata.append(array([x, y, z]))
+  return origdata
 
+
+def makedata(dataset, datafile, fname):
+  data = []
+
+  origdata = load_file(fname)
   n = len(origdata)
 
   # Normalize into mass center.
   c = [0, 0, 0]
 
-  # Calculate the mass center
+  # Calculate the mass center.
   for v in origdata:
     c[0] += v[0]
     c[1] += v[1]
+    # Don't use z.
+
   c[0] /= 1.0 * n
   c[1] /= 1.0 * n
 
@@ -39,13 +45,10 @@ def makefile(dataset, datafile, fname):
   for i, v in enumerate(origdata):
     origdata[i] -= array(c)
 
-  data = makelocal(dataset, datafile, origdata)
-  global_data = makeglobal(dataset, datafile, data)
+  local_data = makelocal(dataset, datafile, origdata)
+  global_data = makeglobal(dataset, datafile, local_data)
 
-  writelocal(dataset, datafile, data)
-
-  return global_data
-
+  return local_data, global_data
 
 def makelocal(dataset, datafile, origdata):
   data = []
@@ -79,9 +82,9 @@ def makeglobal(dataset, datafile, data):
   xacc_sum = 0.0
   ddy_sum = 0.0
 
-  pendownnum = 0
-  num_neg_vel = 0
-  num_pos_vel = 0
+  pendownnum = 0.0
+  num_neg_vel = 0.0
+  num_pos_vel = 0.0
 
   for i, v in enumerate(data):
     x = v[0]
@@ -151,7 +154,7 @@ def makeglobal(dataset, datafile, data):
   features['30avg_ddx'] = xacc_sum / features['00num_samples']
   features['31max_dy'] = max_dy
   features['32avg_ddy'] = ddy_sum / features['00num_samples']
-  features['33var_pressure'] = 0.0
+#  features['33var_pressure'] = 0.0
   features['34num_neg_vel/Td'] = num_neg_vel / features['14pen_down_samples']
   features['37num_pos_vel/Td'] = num_pos_vel / features['14pen_down_samples']
 
@@ -188,7 +191,8 @@ if __name__ == "__main__":
       os.mkdir(SPATH + dataset)
     for datafile in os.listdir(datadir):
       fname = datadir + datafile
-      global_data[datafile] = makefile(dataset, datafile, fname)
+      local_data, global_data[datafile] = makedata(dataset, datafile, fname)
+      writelocal(dataset, datafile, local_data)
 #      break
     writeglobal(dataset, global_data)
 #    break
