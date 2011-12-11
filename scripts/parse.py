@@ -71,10 +71,17 @@ def makelocal(dataset, datafile, origdata):
 def makeglobal(dataset, datafile, data):
   features = {}
 
-  minx = maxx = miny = maxy = None
+  minx = maxx = miny = maxy = maxz = minz = max_dx = max_dy = None
   xvelsum = 0.0
-  posxvel = 0
+  posxvel = 0.0
+  pres_sum = 0.0
+  dx_sum = 0.0
+  xacc_sum = 0.0
+  ddy_sum = 0.0
+
   pendownnum = 0
+  num_neg_vel = 0
+  num_pos_vel = 0
 
   for i, v in enumerate(data):
     x = v[0]
@@ -85,6 +92,10 @@ def makeglobal(dataset, datafile, data):
     yvel = v[4]
     zvel = v[5]
 
+    xacc = v[6]
+    yacc = v[7]
+    zacc = v[8]
+
     xvelsum += xvel
     if xvel > 0:
       posxvel += 1
@@ -92,6 +103,17 @@ def makeglobal(dataset, datafile, data):
     pendown = True if z > 0 else False
     if pendown:
       pendownnum += 1
+
+    if xvel < 0 or yvel < 0:
+      num_neg_vel += 1
+
+    if xvel > 0 or yvel > 0:
+      num_pos_vel += 1
+
+    pres_sum += z
+    dx_sum += xvel
+    xacc_sum += xacc
+    ddy_sum += yacc
 
     if not minx or minx > x:
       minx = x
@@ -101,6 +123,15 @@ def makeglobal(dataset, datafile, data):
       miny = y
     if not maxy or maxy < y:
       maxy = y
+    if not maxz or maxz < z:
+      max_press_point = (x,y)
+      maxz = z
+    if not minz or minz > z:
+      minz = z
+    if not max_dx or max_dx < xvel:
+      max_dx = xvel
+    if not max_dy or max_dy < yvel:
+      max_dy = yvel
 
   features['00num_samples'] = len(data)
   features['01height'] = maxy-miny
@@ -111,6 +142,18 @@ def makeglobal(dataset, datafile, data):
   features['09var_x_vel'] = xvelsum / features['00num_samples']
   features['11num_pos_x_vel'] = posxvel
   features['14pen_down_samples'] = pendownnum
+  features['20avg_pressure'] = pres_sum / features['00num_samples']
+  features['21max_pressure'] = maxz
+  features['22max_pressure_x'] = max_press_point[0]
+  features['22max_pressure_y'] = max_press_point[1]
+  features['28pressure_range'] = maxz - minz
+  features['29max_dx'] = max_dx
+  features['30avg_ddx'] = xacc_sum / features['00num_samples']
+  features['31max_dy'] = max_dy
+  features['32avg_ddy'] = ddy_sum / features['00num_samples']
+  features['33var_pressure'] = 0.0
+  features['34num_neg_vel/Td'] = num_neg_vel / features['14pen_down_samples']
+  features['37num_pos_vel/Td'] = num_pos_vel / features['14pen_down_samples']
 
   return ([k[2:] for k in sorted(features.keys())], [v for k, v in sorted(features.items())])
 
