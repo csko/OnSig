@@ -61,4 +61,5 @@ if __name__ == "__main__":
     glob = glob[1]
     refs.append(glob)
 
-  print 1 if anomaly_classify(test_global, refs, 1e-70) else 0
+  with open("output.txt", "w") as f:
+    print >>f, 1 if anomaly_classify(test_global, refs, 1e-70) else 0
