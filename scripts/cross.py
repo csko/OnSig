@@ -20,6 +20,7 @@ methods = {'anomaly': 'python2 anomaly.py %s %s %s'}
 
 # Parameters to try.
 params  = {'anomaly': ['1e-30', '1e-40', '1e-50', '1e-60']}
+#params  = {'anomaly': ['1e-200', '1e-195', '1e-190', '1e-185', '1e-180', '1e-175', '1e-170', '1e-165', '1e-160', '1e-155', '1e-150', '1e-145', '1e-140', '1e-135', '1e-130', '1e-125', '1e-120', '1e-115', '1e-110', '1e-105', '1e-100', '1e-95', '1e-90', '1e-85', '1e-80', '1e-75', '1e-70', '1e-65', '1e-60', '1e-55', '1e-50', '1e-45', '1e-40', '1e-35', '1e-30', '1e-25', '1e-20']}
 
 def find_genuine():
   """Returns genuine signature file names grouped by the author."""
