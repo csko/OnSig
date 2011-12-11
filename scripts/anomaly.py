@@ -50,7 +50,7 @@ def anomaly_classify(test_global, train_global, eps):
 
 if __name__ == "__main__":
   if len(sys.argv) < 4:
-    print "Usage: %s EPS TRAIN TEST1 [TEST2 [TEST ...]]" % sys.argv[0]
+    print "Usage: %s EPS TEST TRAIN1 [TRAIN2 [TRAIN3 ...]]" % sys.argv[0]
     quit()
 
   eps = float(sys.argv[1])
@@ -63,6 +63,7 @@ if __name__ == "__main__":
 
   for i in range(3, len(sys.argv)):
 #    local, glob = makedata('genuine', sys.argv[i], sys.argv[i]) # non-cached
+
     glob = makedata_cached('genuine', sys.argv[i], sys.argv[i], ['global']) # cached
     glob = glob[1]
     refs.append(glob)
