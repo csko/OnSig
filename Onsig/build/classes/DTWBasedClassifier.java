@@ -224,7 +224,7 @@ public class DTWBasedClassifier {
                 System.out.println(globalThreshold + " " + globalFAR + " " + globalFRR);
                 
                 file.println(globalThreshold + " " + globalFAR + " " + globalFRR);
-                file2.println(globalThreshold + " " + (tp/(tp+fn)) + " " + (fp/(tn+fp)));
+                file2.println(globalThreshold + " " + (double)(tp/(tp+fn)) + " " + (double)(fp/(tn+fp)));
                 file.flush();
                 file2.flush();
 
@@ -260,11 +260,11 @@ public class DTWBasedClassifier {
                 file = new PrintWriter(new FileOutputStream("output.txt"));
 
                 
-                final Signature testSignature = new Signature(defaultValidSignatureDirectory + args[0], numOfAttributes, cols);    //kinyerjük a tesztelendő aláírást
+                final Signature testSignature = new Signature(args[0], numOfAttributes, cols);    //kinyerjük a tesztelendő aláírást
 
                 ArrayList<Signature> trainSignatures = new ArrayList<Signature>(args.length-1);   //tanító aláírások tömbje
                 for ( int i = 1 ; i < args.length ; i++ ) { //sorra vesszük a többi aláírást, amiből tanítóhalmazt építünk
-                    final Signature trainSignature = new Signature(defaultValidSignatureDirectory + args[i], numOfAttributes, cols);   //i. tanító aláírás
+                    final Signature trainSignature = new Signature(args[i], numOfAttributes, cols);   //i. tanító aláírás
                     trainSignatures.add(i-1, trainSignature);   //beteszem a tanítóelemek közé
                 }
 
