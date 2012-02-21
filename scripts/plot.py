@@ -10,14 +10,15 @@ import matplotlib.pyplot as plt
 from numpy import array, append, std, mean
 
 # Do we want to show pressure values?
-PRESSURE=False
+#PRESSURE=False
+PRESSURE=True
 
 # Data path
 F = "../data/"
 
 # Save path
-SPATH="../plots/regular/"
-#SPATH="/srv/http/onsig2/"
+#SPATH="../plots/regular/"
+SPATH="../plots/pressure/"
 
 def normalize(x):
   """Mean normalization of a vector."""
